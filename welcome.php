@@ -8,6 +8,7 @@
    // this user_id is the current logged in user
    $user_id = $_SESSION["id"];
    $username = $_SESSION["username"];
+   $_SESSION["message"] = "";
    
    //query to display list of to do list tasks of the logged in user
    $result = mysqli_query($mysqli, "SELECT * FROM tasks WHERE user_id = $user_id ORDER BY task ASC");
@@ -18,10 +19,22 @@
        $task = $_POST['task'];
        if(empty($task)){
            $errors = "You must input a task.";
+           echo $errors;
        }else{
            mysqli_query($mysqli, "INSERT INTO tasks (task, duedate, user_id) VALUES ('$task', '$duedate', $user_id)");
+           $_SESSION["message"] = "Task added";
            header('location: welcome.php');
        }
+   }
+
+   //
+   if(isset($GET['id'])) {
+      $id = $GET['id'];
+      $result = mysqli_query($mysqli, "SELECT * FROM tasks WHERE id=$id");
+      $record = mysqli_fetch_array($result);
+      $task = $record["name"];
+      $duedate = $record["duedate"];
+      $id = $record["id"];
    }
    
    //to delete the task when the user presses the delete button
@@ -29,18 +42,21 @@
       $id = $_GET["delete"];
       mysqli_query($mysqli, "DELETE FROM tasks WHERE id=$id");
       header('location: welcome.php');
-   } else {
+   }else{
       //echo "Did not delete task.";
    }
 
    //to edit the task when the user presses the edit button
-   if(isset($_GET["edit"])){
-      $id = $_GET["edit"];
-      mysqli_query($mysqli, "SELECT FROM tasks WHERE id=$id");
+   /*if(isset($_POST["edit"])){
+      $task = mysqli_real_escape_string($_POST["task"]);
+      $duedate = mysqli_real_escape_string($_POST["due"]);
+      $id = mysqli_real_escape_string($_POST["id"]);
+      mysqli_query($mysqli, "UPDATE tasks SET task='$task', duedate='$duedate' WHERE id=$id");
+      $_SESSION["message"] = "Task updated";
       header('location: welcome.php');
-   } else {
+   }else{
       //echo "Did not edit task.";
-   }
+   }*/
 
 ?>
 
@@ -58,19 +74,28 @@
 <body>
    <div class="wrapper">
       <header class="header">To Do List</header>
-
+      
+         <?php if(isset($_SESSION["message"])) ?>
+            <div class="message">
+               <?php echo $_SESSION["message"];
+               unset($_SESSION["message"]);
+               ?>
+            </div
+            >
          <article class="main">
          <!-- Main form for user to add tasks and due date-->
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+
                <?php if (isset($errors)){ ?>
                   <p><?php echo $errors; ?></p>
                   <?php  }?>
                   
+                  <input type="hidden" name="id" value="<?php echo $id; ?>">
                   <label id="label-1">Task:</label>
-                  <input type="text" name="task" class="inputBox-1" placeholder="" required>
+                  <input type="text" name="task" class="inputBox-1" placeholder="" value="<?php echo $task; ?>" required>
 
                   <label id="label-2">Due Date:</label>
-                  <input placeholder=""  class="inputBox-2" type="text" name="duedate" onfocus="(this.type='date')" onblur="(this.type='text')" min="2019-05-21" max="2021-12-31">
+                  <input placeholder=""  class="inputBox-2" type="text" name="duedate" value="<?php echo $duedate; ?>" onfocus="(this.type='date')" onblur="(this.type='text')" min="2019-05-21" max="2021-12-31">
    
                   <button type="submit" name="submit" class="button" id="add-task">Add Task</button><br><br>
             </form> 
@@ -95,14 +120,14 @@
                      <td class="edit">
                         <button>
                            <a href="welcome.php?edit=<?php echo $row["id"];?>">
-                              <img src="css/images/pencil-original.png" alt="picture of pencil">
+                              <img src="images/pencil-original.png" alt="picture of pencil">
                            </a>
                         </button>
                      </td>
                      <td class="delete">
                         <button>
                            <a href="welcome.php?delete=<?php echo $row["id"];?>">
-                              <img src="css/images/red-cross-2.jpg" alt="picture of red X">
+                              <img src="images/red-cross-2.jpg" alt="picture of red X">
                            </a>
                         </button>
                      </td>
@@ -115,7 +140,7 @@
          </article> 
 
       <aside class="aside aside-1">
-         <img src="css/images/avatar-3.png" alt="profile picture" class="profile-img">
+         <img src="images/avatar-3.png" alt="profile picture" class="profile-img">
          <h5> Welcome,<br> <?php echo $username; ?></h5>
          <button class="button button-profile" id="change-pass"><a href="password-change.php">Change Password</a></button><br>
          <button class="button button-profile" id="logout"><a href="logout.php">Logout</a></button>

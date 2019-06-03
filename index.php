@@ -4,6 +4,12 @@
    //connect to database
    require_once "connect.php";
 
+   /*$sql = "CREATE TABLE IF NOT EXISTS tasks(
+      id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      task VARCHAR(50),
+      duedate VARCHAR(50),
+      active VARCHAR(50))";*/
+
    // create a user_id variable and username variable 
    // this user_id is the current logged in user
    $user_id = $_SESSION["id"];
@@ -26,16 +32,6 @@
            header('location: welcome.php');
        }
    }
-
-   //
-   if(isset($GET['id'])) {
-      $id = $GET['id'];
-      $result = mysqli_query($mysqli, "SELECT * FROM tasks WHERE id=$id");
-      $record = mysqli_fetch_array($result);
-      $task = $record["name"];
-      $duedate = $record["duedate"];
-      $id = $record["id"];
-   }
    
    //to delete the task when the user presses the delete button
    if(isset($_GET["delete"])){
@@ -47,16 +43,21 @@
    }
 
    //to edit the task when the user presses the edit button
-   /*if(isset($_POST["edit"])){
-      $task = mysqli_real_escape_string($_POST["task"]);
-      $duedate = mysqli_real_escape_string($_POST["due"]);
-      $id = mysqli_real_escape_string($_POST["id"]);
-      mysqli_query($mysqli, "UPDATE tasks SET task='$task', duedate='$duedate' WHERE id=$id");
-      $_SESSION["message"] = "Task updated";
-      header('location: welcome.php');
-   }else{
-      //echo "Did not edit task.";
-   }*/
+   if(isset($_POST['edit'])){
+      $editTask = $_POST['editTask'];
+      $editDate = $_POST['editDate'];
+      $taskID = $_POST['taskID'];
+      //query to update table in database after user presses "update button
+      $sql = "UPDATE tasks SET task='$editTask', duedate='$editDate' WHERE id='$taskID'";
+
+      if (mysqli_query($mysqli, $sql) === TRUE) {
+         echo "Record updated successfully <br>";
+         header('location: welcome.php');
+          } else {
+              echo "Error: " . $sql . "<br>" . $db->error;
+          }
+      }
+          
 
 ?>
 
@@ -80,8 +81,8 @@
                <?php echo $_SESSION["message"];
                unset($_SESSION["message"]);
                ?>
-            </div
-            >
+            </div>
+
          <article class="main">
          <!-- Main form for user to add tasks and due date-->
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
@@ -90,23 +91,25 @@
                   <p><?php echo $errors; ?></p>
                   <?php  }?>
                   
-                  <input type="hidden" name="id" value="<?php echo $id; ?>">
                   <label id="label-1">Task:</label>
-                  <input type="text" name="task" class="inputBox-1" placeholder="" value="<?php echo $task; ?>" required>
+                  <input type="text" name="task" class="inputBox-1" placeholder="" value="">
 
                   <label id="label-2">Due Date:</label>
-                  <input placeholder=""  class="inputBox-2" type="text" name="duedate" value="<?php echo $duedate; ?>" onfocus="(this.type='date')" onblur="(this.type='text')" min="2019-05-21" max="2021-12-31">
+                  <input placeholder=""  class="inputBox-2" type="text" name="duedate" value="" onfocus="(this.type='date')" onblur="(this.type='text')" min="2019-05-21" max="2021-12-31">
    
                   <button type="submit" name="submit" class="button" id="add-task">Add Task</button><br><br>
+
+                  
             </form> 
             
             <table class="table">
                <thead>
                   <tr>
+                     <th class="task">Task ID</th>
                      <th class="task">Task</th>
                      <th class="due">Due Date</th>
-                     <th class="edit">Edit</th>
                      <th class="delete">Delete</th>
+                     <th class="update">Edit</th>
                   </tr>
                </thead>
 
@@ -115,15 +118,9 @@
                   //While loop to display row information (tasks and due date) in database
                   while($row = mysqli_fetch_array($result)){ ?>
                   <tr>
+                     <td class="task"><?php echo $row['id'];?></td>
                      <td class="task"><?php echo $row['task'];?></td>
                      <td class="due"><?php echo $row['duedate'];?></td>
-                     <td class="edit">
-                        <button>
-                           <a href="welcome.php?edit=<?php echo $row["id"];?>">
-                              <img src="images/pencil-original.png" alt="picture of pencil">
-                           </a>
-                        </button>
-                     </td>
                      <td class="delete">
                         <button>
                            <a href="welcome.php?delete=<?php echo $row["id"];?>">
@@ -131,6 +128,16 @@
                            </a>
                         </button>
                      </td>
+                     <td>
+                        <button class="edit"><img src="images/pencil-original.png" alt="picture of pencil"></button><br>
+                        <span class="content">
+                        <input type="text" name="taskID"  class="inputBox-2"  placeholder="Insert Task ID No."><br>
+                        <input type="text" name="editTask" class="inputBox-2" placeholder="Insert Changes"><br>
+                        <input type="date" name="editDate"  class="inputBox-2" type="text" value="" onfocus="(this.type='date')" onblur="(this.type='text')" min="2019-05-21" max="2021-12-31"><br>
+                        <button type="submit" name="edit" class="button">✔</button><br><br>
+                  </span>
+                     </td>
+
                   </tr>
                   <!--end of while loop-->
                   <?php }; ?>
@@ -149,5 +156,14 @@
       <footer class="footer"></footer>
 
    </div>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script>
+  $(document).ready(function () {
+      $(".content").hide();
+$(".edit").click(function () {
+  $(".content").slideToggle();
+});
+});
+  </script>
 </body>
 </html>

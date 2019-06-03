@@ -1,7 +1,13 @@
 <?php
 // Include config file
 require_once "connect.php";
+
+ /*$sql = "CREATE TABLE IF NOT EXISTS tasks(
+      id INT(4) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      username VARCHAR(150),
+      password VARCHAR (255))";*/
  
+
 // Define variables and initialize with empty values
 $username = $password = $confirm_password = "";
 $username_err = $password_err = $confirm_password_err = "";

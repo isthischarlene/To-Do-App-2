@@ -5,10 +5,11 @@
    require_once "connect.php";
 
    /*$sql = "CREATE TABLE IF NOT EXISTS tasks(
-      id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-      task VARCHAR(50),
-      duedate VARCHAR(50),
-      active VARCHAR(50))";*/
+      id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      task VARCHAR(100),
+      duedate DATE,
+      user_id INT(11)
+      FOREIGN KEY (user_id) REFERENCES users (id))";*/
 
    // create a user_id variable and username variable 
    // this user_id is the current logged in user

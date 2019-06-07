@@ -84,7 +84,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             // Attempt to execute the prepared statement
             if($stmt->execute()){
                 // Redirect to login page
-                header("location: login.php");
+                header("location: index.php");
             } else{
                 echo "Something went wrong. Please try again later.";
             }
@@ -133,7 +133,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </div>
 
                     <button type="submit" value="Sign Up" id="button">SIGN UP</button>
-                    <p>Already have an account? Click <a href="login.php"><strong> here</strong></a> to go to login page.</p>
+                    <p>Already have an account? Click <a href="index.php"><strong> here</strong></a> to go to login page.</p>
                 </form>
 
             </div>

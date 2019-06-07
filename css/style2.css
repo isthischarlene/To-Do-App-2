@@ -11,7 +11,7 @@
   }
   
   .header {
-    background-image: url(images/to-do-4.jpg);
+    background-image: url(../images/to-do-4.jpg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -118,6 +118,14 @@
     padding-bottom: 10px;
 }
 
+.message {
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    color: #20645c;
+    background-color: #a7ee8b;
+}
+
 tr:nth-child(even){background-color: lightgrey};
 
 
@@ -128,6 +136,11 @@ tr:nth-child(even){background-color: lightgrey};
 .table .delete .edit .duedate {
   width: 50px;
 }
+
+.update-block {
+  background-color: rgb(243, 114, 114);
+}
+
   
   @media all and (min-width: 600px) {
     .aside { flex: 1 0 0; }
